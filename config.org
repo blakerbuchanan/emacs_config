@@ -16,7 +16,7 @@
 - [[#overview][Overview]]
 - [[#prerequisites][Prerequisites]]
 - [[#what-is-in-my-initel-file][What is in my init.el file?]]
-  - [[#what-is-in-my-configel-file][What is in my config.el file?]]
+- [[#what-is-in-my-configel-file][What is in my config.el file?]]
 - [[#what-is-in-my-packagesel-file][What is in my packages.el file?]]
 
 * References
@@ -55,7 +55,6 @@ Clone this repo and create a symbolic link to the this org file.
 git clone git@github.com:blakerbuchanan/emacs_config.git "${HOME}/.doom.d/emacs_config"
 ln -s "${HOME}/.doom.d/emacs_config/config.org" "${HOME}/.doom.d/config.org"
 #+end_src
-
 * What is in my init.el file?
 
 The header for this file as it is installed by Doom Emacs looks like:
@@ -115,7 +114,7 @@ Below is how I would like to configure my Doom Emacs based on native Doom Emacs.
        ;;ligatures         ; ligatures and symbols to make your code pretty again
        ;;minimap           ; show a map of the code on the side
        modeline          ; snazzy, Atom-inspired modeline, plus API
-       ;;nav-flash         ; blink cursor line after big motions
+       nav-flash         ; blink cursor line after big motions
        ;;neotree           ; a project drawer, like NERDTree for vim
        ophints           ; highlight the region an operation acts on
        (popup +defaults)   ; tame sudden yet inevitable temporary windows
@@ -266,16 +265,16 @@ Below is how I would like to configure my Doom Emacs based on native Doom Emacs.
        ;;twitter           ; twitter client https://twitter.com/vnought
 
        :config
-       literate            ; note that this is what causes Doom to load our org file
+       ;;literate            ; note that this is what causes Doom to load our org file
        (default +bindings +smartparens))
 #+end_src
 
-** What is in my config.el file?
+* What is in my config.el file?
 
 The default config.el for Doom emacs looks like:
 
 #+html: <details><summary>config.el</summary>
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle config.el
 ;;; $DOOMDIR/config.el -*- lexical-binding: t; -*-
 
 ;; Place your private configuration here! Remember, you do not need to run 'doom
@@ -357,7 +356,7 @@ The default config.el for Doom emacs looks like:
 
 Below are some customizations I like for Doom Emacs:
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle config.el
 ;; here is where we want to put all config.el customizations for doom
 ;; Set the theme
 (setq doom-theme 'doom-tomorrow-night)
@@ -369,7 +368,7 @@ Below are some customizations I like for Doom Emacs:
   (projectile-mode +1)
   ;; recommended keymap prefix on Windows/Linux
   (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map))
-  (setq projectile-project-search-path '("~/projects/" "~/Repositories/" "~/repositories/" ("~/github" . 1)))
+  ;; (setq projectile-project-search-path '("~/projects/" "~/Repositories/" "~/repositories/" ("~/github" . 1)))
 
 ;; multiple cursors customizations
 (after! multiple-cursors
@@ -397,14 +396,24 @@ Below are some customizations I like for Doom Emacs:
 ;;(setopt ellama-provider
 ;;	(make-llm-ollama
 ;;	:chat-model "codellama" :embedding-model "codellama")))
+
+(use-package! tree-sitter
+   :hook (prog-mode . turn-on-tree-sitter-mode)
+   :hook (tree-sitter-after-on . tree-sitter-hl-mode)
+   :config
+   (require 'tree-sitter-langs)
+   ;; This makes every node a link to a section of code
+   (setq tree-sitter-debug-jump-buttons t
+         ;; and this highlights the entire sub tree in your code
+         tree-sitter-debug-highlight-jump-region t))
 #+end_src
 
 * What is in my packages.el file?
 
 The default for Doom will look something like this:
 
-#+html: <details><summary>config.el</summary>
-#+begin_src emacs-list :tangle packages.el
+#+html: <details><summary>packages.el</summary>
+#+begin_src emacs-lisp :tangle packages.el
 ;; -*- no-byte-compile: t; -*-
 ;;; $DOOMDIR/packages.el
 
@@ -464,4 +473,7 @@ Some custom packages I want in my Doom emacs:
 (package! chatgpt-shell)
 ;;(package! llm-ollama)
 ;;(package! ellama)
+
+(package! tree-sitter)
+(package! tree-sitter-langs)
 #+end_src
