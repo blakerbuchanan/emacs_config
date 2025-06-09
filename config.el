@@ -21,7 +21,7 @@
 ;; See 'C-h v doom-font' for documentation and more examples of what they
 ;; accept. For example:
 ;;
-;;(setq doom-font (font-spec :family "Fira Code" :size 12 :weight 'semi-light)
+;; (setq doom-font (font-spec :family "Fira Code" :size 12 :weight 'semi-light)
 ;;      doom-variable-pitch-font (font-spec :family "Fira Sans" :size 13))
 ;;
 ;; If you or Emacs can't find your font, use 'M-x describe-font' to look them
@@ -79,11 +79,13 @@
 ;; Set the theme
 (setq doom-theme 'doom-nord-aurora)
 
+(setq fancy-splash-image "~/.config/doom/black-hole.png")
+
 ;; Set the font
 ;; Really we should verify or check that the font exists before we set it...
-(when (doom-font-exists-p "DejaVu Sans Mono")
-  (setq doom-font (font-spec :family "DejaVu Sans Mono" :size 14 :weight 'light)
-     doom-variable-pitch-font (font-spec :family "DejaVu Sans Mono" :size 12)))
+(when (doom-font-exists-p "JetBrains Mono")
+  (setq doom-font (font-spec :family "JetBrains Mono" :size 14 :weight 'regular)
+     doom-variable-pitch-font (font-spec :family "JetBrains Mono" :size 12)))
 
 ;; display line numbers
 (setq display-line-numbers-type t)
@@ -92,7 +94,7 @@
   (projectile-mode +1)
   ;; recommended keymap prefix on Windows/Linux
   (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
-  (setq projectile-project-search-path '("~/projects/" "~/Repositories/" "~/repositories/")))
+  (setq projectile-project-search-path '("~/projects/" "~/Repositories/" "~/workspaces/")))
 
 ;; maximize upon loading default
 (add-to-list 'default-frame-alist '(fullscreen . maximized))
@@ -127,13 +129,47 @@
          tree-sitter-debug-highlight-jump-region t))
 
 ;; multiple cursors customizations
-(after! multiple-cursors
-  (require 'multiple-cursors)
-  (global-set-key (kbd "C-S-c C-S-c") 'mc/edit-lines)
-  (global-set-key (kbd "C->") 'mc/mark-next-like-this)
-  (global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
-  (global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this))
+;; (after! multiple-cursors
+;;   (require 'multiple-cursors)
+;;   (global-set-key (kbd "C-S-c C-S-c") 'mc/edit-lines)
+;;   (global-set-key (kbd "C->") 'mc/mark-next-like-this)
+;;   (global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
+;;   (global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this))
 
-;;(after! hl-line)
-;;   (require 'hl-line)
-;;   (set-face-background 'hl-line "IndianRed")
+;; set global key bindings for multiple-cursors
+(global-set-key (kbd "C-S-c C-S-c") 'mc/edit-lines)
+(global-set-key (kbd "C->") 'mc/mark-next-like-this)
+(global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
+(global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this)
+
+;; save the buffer if focus changes
+(add-function :after
+after-focus-change-function
+        (lambda ()
+          (unless (frame-focus-state)
+(save-some-buffers t nil))))
+
+;; Use xml-mode for ROS .launch files
+(add-to-list 'auto-mode-alist '("\\.launch\\'" . xml-mode))
+
+(after! org
+  (setq org-roam-directory "~/org-roam")
+
+  (setq org-todo-keywords
+       '((sequence "TODO(t)" "IN-PROGRESS(p!)" "BLOCKED(b@/!)" "|"
+          "DONE(d!)")))
+
+ (setq org-todo-keyword-faces
+             '(("TODO" . (:foreground "orange" :weight bold))
+               ("IN-PROGRESS" . (:foreground "green" :weight bold))
+               ("BLOCKED" . (:foreground "red" :weight bold))
+               ("DONE" . (:foreground "grey" :weight bold)))))
+
+(setq-default tab-width 4)  ; Set tab width to 4 spaces
+
+;; Hook to apply custom indentation for all major modes
+(defun my-global-indent-settings ()
+  (setq tab-width 4))
+
+;; Add the custom hook to all programming modes
+(add-hook 'prog-mode-hook 'my-global-indent-settings)
