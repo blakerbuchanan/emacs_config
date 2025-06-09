@@ -11,10 +11,12 @@
 * Table of Contents :TOC_3:noexport:
 - [[#references][References]]
 - [[#installing-emacs][Installing Emacs]]
+  - [[#mac-os][Mac OS]]
+  - [[#ubuntu-linux][Ubuntu Linux]]
 - [[#overview][Overview]]
 - [[#prerequisites][Prerequisites]]
 - [[#what-is-in-my-initel-file][What is in my init.el file?]]
-- [[#what-is-in-my-configel-file][What is in my config.el file?]]
+  - [[#what-is-in-my-configel-file][What is in my config.el file?]]
 - [[#what-is-in-my-packagesel-file][What is in my packages.el file?]]
 
 * References
@@ -22,10 +24,10 @@ This org file is based on Diego Zamboni's, [[https://github.com/zzamboni/dot-doo
 My configuration was also inspired by [zflat's](https://gist.github.com/zflat/bf17281acab1645029034817ec347b20) emacs configuration.
 
 * Installing Emacs
-Mac OS
+** Mac OS
 I followed the instructions [here](https://www.arthurbrrs.me/clojure-doom-emacs-m1) to install Emacs and Doom Emacs for Mac OS.
 
-Ubuntu Linux
+** Ubuntu Linux
 Install Emacs:
 
 #+begin_src bash :noeval :tangle no
@@ -83,6 +85,8 @@ The header for this file as it is installed by Doom Emacs looks like:
 ;;      directory (for easy access to its source code).
 #+end_src
 #+html: </details>
+
+Below is how I would like to configure my Doom Emacs based on native Doom Emacs.
 
 #+begin_src emacs-lisp :tangle init.el
 ;; here is where all of the init.el goes for Doom. tangle writes it to the init.el file
@@ -266,8 +270,11 @@ The header for this file as it is installed by Doom Emacs looks like:
        (default +bindings +smartparens))
 #+end_src
 
-* What is in my config.el file?
+** What is in my config.el file?
 
+The default config.el for Doom emacs looks like:
+
+#+html: <details><summary>config.el</summary>
 #+begin_src emacs-lisp
 ;;; $DOOMDIR/config.el -*- lexical-binding: t; -*-
 
@@ -346,7 +353,9 @@ The header for this file as it is installed by Doom Emacs looks like:
 ;; You can also try 'gd' (or 'C-c c d') to jump to their definition and see how
 ;; they are implemented.
 #+end_src
+#+html: </details>
 
+Below are some customizations I like for Doom Emacs:
 
 #+begin_src emacs-lisp
 ;; here is where we want to put all config.el customizations for doom
@@ -360,6 +369,7 @@ The header for this file as it is installed by Doom Emacs looks like:
   (projectile-mode +1)
   ;; recommended keymap prefix on Windows/Linux
   (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map))
+  (setq projectile-project-search-path '("~/projects/" "~/Repositories/" "~/repositories/" ("~/github" . 1)))
 
 ;; multiple cursors customizations
 (after! multiple-cursors
@@ -379,8 +389,8 @@ The header for this file as it is installed by Doom Emacs looks like:
   (require 'chatgpt-shell)
   (setq chatgpt-shell-openai-key "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"))
 
-;;(after! ollama
 ;; ollama customizations
+;;(after! ollama
 ;;(require 'llm-ollama)
 ;;(require 'ellama)
 ;;(setopt ellama-language "English")
@@ -393,6 +403,7 @@ The header for this file as it is installed by Doom Emacs looks like:
 
 The default for Doom will look something like this:
 
+#+html: <details><summary>config.el</summary>
 #+begin_src emacs-list :tangle packages.el
 ;; -*- no-byte-compile: t; -*-
 ;;; $DOOMDIR/packages.el
@@ -445,6 +456,7 @@ The default for Doom will look something like this:
 ;; ...Or *all* packages (NOT RECOMMENDED; will likely break things)
 ;; (unpin! t)
 #+end_src
+#+html: </details>
 
 Some custom packages I want in my Doom emacs:
 
