@@ -26,7 +26,19 @@ Mac OS
 I followed the instructions [here](https://www.arthurbrrs.me/clojure-doom-emacs-m1) to install Emacs and Doom Emacs for Mac OS.
 
 Ubuntu Linux
-TODO
+Install Emacs:
+
+#+begin_src bash :noeval :tangle no
+sudo apt-add-repository ppa:ubuntu-elisp/ppa
+sudo apt update
+sudo apt install emacs-snapshot
+#+end_src
+
+To install Doom, do
+#+begin_src bash :noeval :tangle :no
+git clone --depth 1 https://github.com/hlissner/doom-emacs ~/.emacs.d
+~/.emacs.d/bin/doom install
+#+end_src
 
 * Overview
 This org file was created as a means of having a persisting Doom emacs configuration across devices / needed reconfigurations.
@@ -35,7 +47,13 @@ The hope is that this will work for both Linux and Mac OS based configurations.
 * Prerequisites
 Ensure you have followed the instructions for installing Doom Emacs for either Mac OS or Ubuntu linux above.
 
-Clone this
+Clone this repo and create a symbolic link to the this org file.
+
+#+begin_src bash :noeval :tangle no
+git clone git@github.com:blakerbuchanan/emacs_config.git "${HOME}/.doom.d/emacs_config"
+ln -s "${HOME}/.doom.d/emacs_config/config.org" "${HOME}/.doom.d/config.org"
+#+end_src
+
 * What is in my init.el file?
 
 The header for this file as it is installed by Doom Emacs looks like:
@@ -244,7 +262,7 @@ The header for this file as it is installed by Doom Emacs looks like:
        ;;twitter           ; twitter client https://twitter.com/vnought
 
        :config
-       literate
+       literate            ; note that this is what causes Doom to load our org file
        (default +bindings +smartparens))
 #+end_src
 
