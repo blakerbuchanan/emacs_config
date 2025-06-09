@@ -51,10 +51,11 @@
 
 (package! chatgpt-shell)
 ;;(package! llm-ollama)
-;;(package! ellama)
+(package! ellama)
 
 (package! tree-sitter)
 (package! tree-sitter-langs)
 
 (unpin! org-roam)
 (package! org-roam-ui)
+(package! dumb-jump)

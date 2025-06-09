@@ -93,7 +93,9 @@
   ;; projectile customizations
   (projectile-mode +1)
   ;; recommended keymap prefix on Windows/Linux
-  (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map))
+  (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
+  (setq projectile-project-root-files-bottom-up
+      (append '(".projectile") projectile-project-root-files-bottom-up)))
 
 ;; maximize upon loading default
 (add-to-list 'default-frame-alist '(fullscreen . maximized))
@@ -109,13 +111,12 @@
   (setq chatgpt-shell-openai-key "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"))
 
 ;; ollama customizations
-;;(after! ollama
-;;(require 'llm-ollama)
-;;(require 'ellama)
-;;(setopt ellama-language "English")
-;;(setopt ellama-provider
-;;	(make-llm-ollama
-;;	:chat-model "codellama" :embedding-model "codellama")))
+(after! ollama
+  (require 'ellama)
+  (setopt ellama-language "English")
+  (setopt ellama-provider
+	  (make-llm-ollama
+	   :chat-model "codellama" :embedding-model "codellama")))
 
 (use-package! tree-sitter
    :hook (prog-mode . turn-on-tree-sitter-mode)
@@ -201,6 +202,39 @@ after-focus-change-function
 (add-hook 'after-init-hook #'global-flycheck-mode -1)
 
 (add-hook 'find-file-hook (lambda () (flycheck-mode -1)))
+
+(defun my-toggle-comment-region-or-line ()
+  "Toggle comment on the current line or selected region.
+If a region is selected, comment/uncomment the region.
+Otherwise, comment/uncomment the current line."
+  (interactive)
+  (if (use-region-p)
+      (comment-or-uncomment-region (region-beginning) (region-end))
+    (comment-or-uncomment-region (line-beginning-position) (line-end-position))))
+
+(map! :leader "c l" #'my-toggle-comment-region-or-line)  ;; Bind to <leader> c l
+(map! :i "M-;" #'my-toggle-comment-region-or-line)  ;; Insert mode
+(map! :n "M-;" #'my-toggle-comment-region-or-line)  ;; Normal mode
+(map! :v "M-;" #'my-toggle-comment-region-or-line)  ;; Visual mode
+
+(after! dumb-jump
+  ;; Set your preferred backend (optional)
+  (setq dumb-jump-prefer-searcher 'rg)
+
+  ;; Activate dumb-jump as an xref backend
+  (add-hook 'xref-backend-functions #'dumb-jump-xref-activate t)
+
+  ;; Bind keys in `global-map` for Emacs-style bindings
+  ;; map! sometimes doesn't work, so I just global-set-key after this...
+  (map! :leader "M-g o" #'dumb-jump-go
+        :leader "M-g b" #'dumb-jump-back
+        :leader "M-g q" #'dumb-jump-quick-look
+        :leader "M-g w" #'dumb-jump-go-other-window))
+
+(global-set-key (kbd "M-g o") 'dumb-jump-go)
+(global-set-key (kbd "M-g b") 'dumb-jump-back)
+(global-set-key (kbd "M-g q") 'dumb-jump-quick-look)
+(global-set-key (kbd "M-g w") 'dumb-jump-go-other-window)
 
 ;; Enable LaTeX preview in Org mode
 ;;(setq org-startup-with-latex-preview t)
