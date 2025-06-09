@@ -86,7 +86,7 @@
        ;;vterm             ; the best terminal emulation in Emacs
 
        :checkers
-       syntax              ; tasing you for every semicolon you forget
+       ;;syntax              ; tasing you for every semicolon you forget
        ;;(spell +flyspell) ; tasing you for misspelling mispelling
        ;;grammar           ; tasing grammar mistake every you make
 
@@ -101,7 +101,7 @@
        ;;ein               ; tame Jupyter notebooks with emacs
        (eval +overlay)     ; run code, run (also, repls)
        lookup              ; navigate your code and its documentation
-       ;;lsp               ; M-x vscode
+       (lsp +clangd)               ; M-x vscode
        magit             ; a git porcelain for Emacs
        ;;make              ; run make tasks from Emacs
        ;;pass              ; password manager for nerds
@@ -204,3 +204,8 @@
        :config
        ;;literate            ; note that this is what causes Doom to load our org file
        (default +bindings +smartparens))
+
+(add-hook! 'projectile-mode-hook
+  (remove-hook 'buffer-list-update-hook #'projectile-track-known-projects-find-file-hook)
+  (add-hook 'projectile-find-dir-hook #'projectile-track-known-projects-find-file-hook t)
+  (add-hook 'dired-before-readin-hook #'projectile-track-known-projects-find-file-hook t t))

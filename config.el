@@ -93,8 +93,7 @@
   ;; projectile customizations
   (projectile-mode +1)
   ;; recommended keymap prefix on Windows/Linux
-  (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
-  (setq projectile-project-search-path '("~/projects/" "~/Repositories/" "~/workspaces/")))
+  (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map))
 
 ;; maximize upon loading default
 (add-to-list 'default-frame-alist '(fullscreen . maximized))
@@ -129,13 +128,6 @@
          tree-sitter-debug-highlight-jump-region t))
 
 ;; multiple cursors customizations
-;; (after! multiple-cursors
-;;   (require 'multiple-cursors)
-;;   (global-set-key (kbd "C-S-c C-S-c") 'mc/edit-lines)
-;;   (global-set-key (kbd "C->") 'mc/mark-next-like-this)
-;;   (global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
-;;   (global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this))
-
 ;; set global key bindings for multiple-cursors
 (global-set-key (kbd "C-S-c C-S-c") 'mc/edit-lines)
 (global-set-key (kbd "C->") 'mc/mark-next-like-this)
@@ -156,14 +148,16 @@ after-focus-change-function
   (setq org-roam-directory "~/org-roam")
 
   (setq org-todo-keywords
-       '((sequence "TODO(t)" "IN-PROGRESS(p!)" "BLOCKED(b@/!)" "|"
-          "DONE(d!)")))
+       '((sequence "TODO(t)" "IN-PROGRESS(p!)" "BLOCKED(b@/!)" "|" "DONE(d!)")
+        (sequence "READ(r)" "READING(R)" "|" "DONE(d!)")))
 
  (setq org-todo-keyword-faces
              '(("TODO" . (:foreground "orange" :weight bold))
                ("IN-PROGRESS" . (:foreground "green" :weight bold))
                ("BLOCKED" . (:foreground "red" :weight bold))
-               ("DONE" . (:foreground "grey" :weight bold)))))
+               ("DONE" . (:foreground "grey" :weight bold))
+               ("READ" . (:foreground "yellow" :weight bold))
+               ("READING" . (:foreground "green" :weight bold)))))
 
 (setq-default tab-width 4)  ; Set tab width to 4 spaces
 
@@ -173,3 +167,76 @@ after-focus-change-function
 
 ;; Add the custom hook to all programming modes
 (add-hook 'prog-mode-hook 'my-global-indent-settings)
+
+(use-package! websocket
+    :after org-roam)
+
+(use-package! org-roam-ui
+    :after org-roam ;; or :after org
+;;         normally we'd recommend hooking orui after org-roam, but since org-roam does not have
+;;         a hookable mode anymore, you're advised to pick something yourself
+;;         if you don't care about startup time, use
+;;  :hook (after-init . org-roam-ui-mode)
+    :config
+    (setq org-roam-ui-sync-theme t
+          org-roam-ui-follow t
+          org-roam-ui-update-on-save t
+          org-roam-ui-open-on-start t))
+
+
+(after! json-mode
+  (add-to-list 'auto-mode-alist '("\\.json\\'" . json-mode)))
+
+;; Enable `lsp` for C and C++ modes
+(after! lsp-clients
+  (set-lsp-priority! 'clangd 1)) ;; give clangd higher priority
+
+(add-hook 'c-mode-hook #'lsp)
+(add-hook 'c++-mode-hook #'lsp)
+
+(setenv "PATH" (concat (getenv "PATH") ":/usr/local/bin"))
+(setq exec-path (append exec-path '("/usr/local/bin")))
+
+(global-flycheck-mode -1)
+(add-hook 'after-init-hook #'global-flycheck-mode -1)
+
+(add-hook 'find-file-hook (lambda () (flycheck-mode -1)))
+
+;; Enable LaTeX preview in Org mode
+;;(setq org-startup-with-latex-preview t)
+
+;; Tramp support
+;; (after! tramp
+;;   (setq tramp-persistency-file-name "~/.config/doom/.cache/tramp")
+;;   (defun my/connect-remote-ssh ()
+;;     "Prompt for remote host and connect via SSH using Tramp."
+;;     (interactive)
+;;     (let* ((hosts (or (mapcar #'car tramp-connection-properties)
+;;                       '("example.com")))  ; Default if no saved connections
+;;            (host (completing-read "Connect to host: " hosts nil nil))
+;;            (user (read-string "Username: " (user-login-name)))
+;;            (remote-path (format "/ssh:%s@%s:" user host)))
+;;       (find-file remote-path)))
+
+;;   (map! :leader
+;;          :desc "Connect to remote SSH" "C-c o s" #'my/connect-remote-ssh))
+
+;; (setq tramp-persistency-file-name "~/.config/doom/.cache/tramp")
+;; (defun my/connect-remote-ssh ()
+;;   "Prompt for remote host and connect via SSH using Tramp."
+;;   (interactive)
+;;   (let* ((hosts (or (mapcar #'car tramp-connection-properties)
+;;                     '("example.com")))  ; Default if no saved connections
+;;          (host (completing-read "Connect to host: " hosts nil nil))
+;;          (user (read-string "Username: " (user-login-name)))
+;;          (remote-path (format "/ssh:%s@%s:" user host)))
+;;     (find-file remote-path)))
+
+;; (map! :map global-map
+;;       "C-c o s" #'my/connect-remote-ssh)
+
+;; TODO Highlight all
+
+;; TODO Indent highlighted by one tab character
+
+;; TODO Set a key to open a tramp buffer and ssh
