@@ -393,7 +393,6 @@ The header for this file as it is installed by Doom Emacs looks like:
 
 The default for Doom will look something like this:
 
-#+html: <details><summary>init.el</summary>
 #+begin_src emacs-list :tangle packages.el
 ;; -*- no-byte-compile: t; -*-
 ;;; $DOOMDIR/packages.el
