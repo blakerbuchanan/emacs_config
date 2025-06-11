@@ -103,20 +103,20 @@
 ;;(setq ns-use-native-fullscreen nil)
 
 ;; Remove bar at top of screen
-(add-to-list 'default-frame-alist '(undecorated . t))
+;;(add-to-list 'default-frame-alist '(undecorated . t))
 
 ;; chatgpt-shell customizations
-(after! chatgpt-shell
-  (require 'chatgpt-shell)
-  (setq chatgpt-shell-openai-key "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"))
+;;(after! chatgpt-shell
+;;  (require 'chatgpt-shell)
+;;  (setq chatgpt-shell-openai-key "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"))
 
 ;; ollama customizations
-(after! ollama
-  (require 'ellama)
-  (setopt ellama-language "English")
-  (setopt ellama-provider
-	  (make-llm-ollama
-	   :chat-model "codellama" :embedding-model "codellama")))
+;; (after! ollama
+;;   (require 'ellama)
+;;   (setopt ellama-language "English")
+;;   (setopt ellama-provider
+;; 	  (make-llm-ollama
+;; 	   :chat-model "codellama" :embedding-model "codellama")))
 
 (use-package! tree-sitter
    :hook (prog-mode . turn-on-tree-sitter-mode)
@@ -198,10 +198,10 @@ after-focus-change-function
 (setenv "PATH" (concat (getenv "PATH") ":/usr/local/bin"))
 (setq exec-path (append exec-path '("/usr/local/bin")))
 
-(global-flycheck-mode -1)
-(add-hook 'after-init-hook #'global-flycheck-mode -1)
+;;(global-flycheck-mode -1)
+;;(add-hook 'after-init-hook #'global-flycheck-mode -1)
 
-(add-hook 'find-file-hook (lambda () (flycheck-mode -1)))
+;;(add-hook 'find-file-hook (lambda () (flycheck-mode -1)))
 
 (defun my-toggle-comment-region-or-line ()
   "Toggle comment on the current line or selected region.
@@ -274,3 +274,14 @@ Otherwise, comment/uncomment the current line."
 ;; TODO Indent highlighted by one tab character
 
 ;; TODO Set a key to open a tramp buffer and ssh
+
+;; Maximize the initial frame on Windows
+;;(when (eq system-type 'windows-nt)
+;;  (add-to-list 'default-frame-alist '(fullscreen . maximized)))
+;;(setq debug-on-error t)
+
+(setq markdown-hide-markup t)
+(use-package! markdown-mode
+  :config
+  (setq markdown-fontify-code-blocks-natively t
+        markdown-hide-markup t))
