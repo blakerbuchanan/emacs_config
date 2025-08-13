@@ -77,7 +77,7 @@
 
 ;; here is where we want to put all config.el customizations for doom
 ;; Set the theme
-(setq doom-theme 'doom-nord-aurora)
+(setq doom-theme 'doom-spacegrey)
 
 (setq fancy-splash-image "~/.config/doom/black-hole.png")
 
@@ -104,11 +104,6 @@
 
 ;; Remove bar at top of screen
 ;;(add-to-list 'default-frame-alist '(undecorated . t))
-
-;; chatgpt-shell customizations
-;;(after! chatgpt-shell
-;;  (require 'chatgpt-shell)
-;;  (setq chatgpt-shell-openai-key "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"))
 
 ;; ollama customizations
 ;; (after! ollama
@@ -285,3 +280,13 @@ Otherwise, comment/uncomment the current line."
   :config
   (setq markdown-fontify-code-blocks-natively t
         markdown-hide-markup t))
+
+(use-package! xenops
+  :hook (org-mode . xenops-mode)
+  :config
+  (setq xenops-math-image-scale 2.0))  ; Optional: make LaTeX previews larger
+
+(add-hook! 'org-mode-hook
+  (lambda ()
+    (xenops-mode)
+    (xenops-reparse-buffer)))  ;; this renders all LaTeX on open
