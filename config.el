@@ -103,15 +103,15 @@
 ;;(setq ns-use-native-fullscreen nil)
 
 ;; Remove bar at top of screen
-;;(add-to-list 'default-frame-alist '(undecorated . t))
+(add-to-list 'default-frame-alist '(undecorated . t))
 
 ;; ollama customizations
-;; (after! ollama
-;;   (require 'ellama)
-;;   (setopt ellama-language "English")
-;;   (setopt ellama-provider
-;; 	  (make-llm-ollama
-;; 	   :chat-model "codellama" :embedding-model "codellama")))
+(after! ollama
+  (require 'ellama)
+  (setopt ellama-language "English")
+  (setopt ellama-provider
+	  (make-llm-ollama
+	   :chat-model "codellama" :embedding-model "codellama")))
 
 (use-package! tree-sitter
    :hook (prog-mode . turn-on-tree-sitter-mode)
@@ -193,8 +193,8 @@ after-focus-change-function
 (setenv "PATH" (concat (getenv "PATH") ":/usr/local/bin"))
 (setq exec-path (append exec-path '("/usr/local/bin")))
 
-;;(global-flycheck-mode -1)
-;;(add-hook 'after-init-hook #'global-flycheck-mode -1)
+;; (global-flycheck-mode -1)
+;; (add-hook 'after-init-hook #'global-flycheck-mode -1)
 
 ;;(add-hook 'find-file-hook (lambda () (flycheck-mode -1)))
 
@@ -270,23 +270,67 @@ Otherwise, comment/uncomment the current line."
 
 ;; TODO Set a key to open a tramp buffer and ssh
 
-;; Maximize the initial frame on Windows
-;;(when (eq system-type 'windows-nt)
-;;  (add-to-list 'default-frame-alist '(fullscreen . maximized)))
-;;(setq debug-on-error t)
+;; Configure org mode
+(after! org
+  (use-package! xenops
+    :hook (org-mode . xenops-mode)
+    :config
+    (setq xenops-math-image-scale 2.0))  ; Optional: make LaTeX previews larger
 
-(setq markdown-hide-markup t)
-(use-package! markdown-mode
-  :config
-  (setq markdown-fontify-code-blocks-natively t
-        markdown-hide-markup t))
+  (add-hook! 'org-mode-hook
+    (lambda ()
+      (xenops-mode)
+      (xenops-reparse-buffer)))  ;; this renders all LaTeX on open
 
-(use-package! xenops
-  :hook (org-mode . xenops-mode)
-  :config
-  (setq xenops-math-image-scale 2.0))  ; Optional: make LaTeX previews larger
+  (setq org-hide-emphasis-markers t)
 
-(add-hook! 'org-mode-hook
-  (lambda ()
-    (xenops-mode)
-    (xenops-reparse-buffer)))  ;; this renders all LaTeX on open
+  (font-lock-add-keywords 'org-mode
+                          '(("^ *\\([-]\\) "
+                             (0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "•"))))))
+
+  (use-package! org-superstar
+    :config
+    (add-hook 'org-mode-hook (lambda () (org-superstar-mode 1))))
+
+  (let* ((variable-tuple
+          (cond ((x-list-fonts "JetBrains Mono")  '(:font "JetBrains Mono"))
+                ((x-list-fonts "ETBembo")         '(:font "ETBembo"))
+                ((x-list-fonts "Source Sans Pro") '(:font "Source Sans Pro"))
+                ((x-list-fonts "Lucida Grande")   '(:font "Lucida Grande"))
+                ((x-list-fonts "Verdana")         '(:font "Verdana"))
+                ((x-family-fonts "Sans Serif")    '(:family "Sans Serif"))
+                (nil (warn "Cannot find a Sans Serif Font.  Install Source Sans Pro."))))
+         (base-font-color     (face-foreground 'default nil 'default))
+         (headline           `(:inherit default :weight bold :foreground ,base-font-color)))
+
+    (custom-theme-set-faces
+     'user
+     `(org-level-8 ((t (,@headline ,@variable-tuple))))
+     `(org-level-7 ((t (,@headline ,@variable-tuple))))
+     `(org-level-6 ((t (,@headline ,@variable-tuple))))
+     `(org-level-5 ((t (,@headline ,@variable-tuple))))
+     `(org-level-4 ((t (,@headline ,@variable-tuple :height 1.3))))
+     `(org-level-3 ((t (,@headline ,@variable-tuple :height 1.3))))
+     `(org-level-2 ((t (,@headline ,@variable-tuple :height 1.5))))
+     `(org-level-1 ((t (,@headline ,@variable-tuple :height 1.5))))
+     `(org-document-title ((t (,@headline ,@variable-tuple :height 1.5 :underline nil))))))
+
+  (custom-theme-set-faces
+    'user
+    '(org-block ((t (:inherit fixed-pitch))))
+    '(org-code ((t (:inherit (shadow fixed-pitch)))))
+    '(org-document-info ((t (:foreground "dark orange"))))
+    '(org-document-info-keyword ((t (:inherit (shadow fixed-pitch)))))
+    '(org-indent ((t (:inherit (org-hide fixed-pitch)))))
+    '(org-link ((t (:foreground "royal blue" :underline t))))
+    '(org-meta-line ((t (:inherit (font-lock-comment-face fixed-pitch)))))
+    '(org-property-value ((t (:inherit fixed-pitch))) t)
+    '(org-special-keyword ((t (:inherit (font-lock-comment-face fixed-pitch)))))
+    '(org-table ((t (:inherit fixed-pitch :foreground "#83a598"))))
+    '(org-tag ((t (:inherit (shadow fixed-pitch) :weight bold :height 0.8))))
+    '(org-verbatim ((t (:inherit (shadow fixed-pitch)))))
+    '(org-superstar-bullet-face ((t (:height 1.5)))))
+
+  (add-hook 'org-mode-hook 'visual-line-mode))
+
+(global-unset-key (kbd "S-\""))

@@ -59,3 +59,5 @@
 (unpin! org-roam)
 (package! org-roam-ui)
 (package! dumb-jump)
+(package! org-superstar)
+(package! markdown-soma)
